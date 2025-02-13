@@ -1,0 +1,41 @@
+import subprocess
+
+def run_command(command):
+    """Run a shell command and print its output."""
+    try:
+        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e.stderr}")
+
+def install_jenkins():
+    print("Updating packages...")
+    run_command("sudo yum update -y")
+
+    print("Installing Java...")
+    run_command("sudo yum install -y java-17-amazon-corretto")
+
+    print("Installing wget...")
+    run_command("sudo yum install -y wget")
+
+    print("Adding Jenkins repository...")
+    run_command("sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo")
+
+    print("Importing Jenkins repository key...")
+    run_command("sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key")
+
+    print("Installing Jenkins...")
+    run_command("sudo yum install -y jenkins")
+
+    print("Enabling and starting Jenkins service...")
+    run_command("sudo systemctl enable jenkins")
+    run_command("sudo systemctl start jenkins")
+
+    print("Checking Jenkins status...")
+    run_command("sudo systemctl status jenkins")
+
+    print("\nJenkins Admin Password:")
+    run_command("sudo cat /var/lib/jenkins/secrets/initialAdminPassword")
+
+if __name__ == "__main__":
+    install_jenkins()
